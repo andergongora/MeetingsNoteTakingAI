@@ -1,0 +1,20 @@
+[project]
+name = "meetingsnotetakingai"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Ander Góngora",email = "andergongoraallue@gmail.com"}
+]
+requires-python = ">=3.13"
+dependencies = [
+    "sounddevice>=0.4.6",
+    "soundfile>=0.12.1",
+    "numpy>=1.26.0",
+    "PyAudioWPatch>=0.2.12.5",
+    "scipy>=1.11.0",
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
