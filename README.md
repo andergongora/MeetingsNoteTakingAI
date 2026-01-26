@@ -12,7 +12,20 @@ Sistema completo de IA para reuniones que graba, transcribe y analiza automátic
 
 ## 🚀 Inicio Rápido
 
-### 1. Instalar Dependencias
+### Opción 1: Scripts de Windows (MÁS FÁCIL) ⭐
+
+**Primera vez:**
+1. **Doble clic en `SETUP.bat`** - Configura todo (FFmpeg, .env, dependencias)
+2. **Doble clic en `RUN.bat`** - Ejecuta la aplicación
+
+**Después:**
+- Solo ejecuta `RUN.bat` cada vez que quieras grabar una reunión
+
+> **Nota**: Los scripts solo funcionan en **Windows nativo**. WSL y Docker NO soportan grabación de audio (limitación de PyAudioWPatch/WASAPI).
+
+### Opción 2: Instalación Manual
+
+#### 1. Instalar Dependencias
 
 ```bash
 pip install PyAudioWPatch numpy openai-whisper torch google-generativeai python-dotenv
@@ -77,9 +90,22 @@ MeetingsNoteTakingAI/
 │   ├── recordings/       # Archivos WAV
 │   ├── transcripts/      # Transcripciones TXT
 │   └── summaries/        # Análisis (JSON + MD)
+├── SETUP.bat             # ⭐ Configuración inicial (primera vez)
+├── RUN.bat               # ⭐ Ejecutar aplicación
 ├── main.py               # Aplicación principal
+├── requirements.txt      # Dependencias pip
 └── .env                  # Solo Gemini API key
 ```
+
+## ⚠️ Importante: WSL y Docker
+
+**La grabación de audio NO funciona en WSL ni Docker** porque el proyecto usa `PyAudioWPatch`, que requiere acceso directo a WASAPI (Windows Audio Session API).
+
+- ✅ **Windows nativo** - Funciona completamente
+- ❌ **WSL** - NO graba audio (limitación técnica de acceso a hardware)
+- ❌ **Docker** - NO graba audio (contenedores no tienen acceso a dispositivos de audio)
+
+**Solución**: Ejecuta desde Windows nativo usando los scripts `.bat` o PowerShell.
 
 ## ⚙️ Modelos de Whisper
 
