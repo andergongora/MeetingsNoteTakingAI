@@ -7,12 +7,14 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
+from src.diarizer import PyannoteDiarizer
+
 # Add src to path for importing
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.config import Config
 from src.recorder import AudioRecorder
-from src.transcriber import Transcriber
+from src.transcriber import SpeakerAligner, Transcriber
 from src.analyzer import MeetingAnalyzer
 
 
@@ -48,6 +50,7 @@ def main():
 
     # Generate timestamp for this meeting
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    timestamp = "20260126_173852"  # For testing purposes
 
     # Define file paths
     audio_path = Config.RECORDINGS_DIR / f"reunion_{timestamp}.wav"
@@ -94,15 +97,23 @@ def main():
 
     try:
         transcriber = Transcriber()
-        transcript = transcriber.transcribe(audio_path)
-        transcriber.save_transcript(transcript, transcript_path)
+        transcription = transcriber.transcribe(audio_path)
+
+        speaker_aligner = SpeakerAligner()
+        # diarizer = PyannoteDiarizer()
+
+        diarization = transcriber.diarize(str(audio_path))
+
+        # Align speaker segments with transcription
+        aligned_segments = speaker_aligner.align(transcription, diarization)
+
+        # Create tagged transcript
+        tagged_transcript = "\n".join([f"[{speaker}]: {text}" for speaker, start, end, text in aligned_segments])
+
+        transcriber.save_transcript(tagged_transcript, transcript_path)
+
     except Exception as e:
         print(f"❌ Error transcribiendo: {e}")
-        print()
-        print("💡 Posibles causas:")
-        print("   - Archivo de audio corrupto")
-        print("   - Falta ffmpeg (instalar: winget install ffmpeg)")
-        print("   - Memoria insuficiente para el modelo")
         return 1
 
     # Step 3: Analyze with Gemini
@@ -112,7 +123,7 @@ def main():
 
     try:
         analyzer = MeetingAnalyzer()
-        analysis = analyzer.analyze(transcript)
+        analysis = analyzer.analyze(tagged_transcript)
         json_path, md_path = analyzer.save_analysis(analysis, summary_path)
     except Exception as e:
         print(f"❌ Error analizando: {e}")

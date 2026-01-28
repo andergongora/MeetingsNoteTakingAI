@@ -23,6 +23,7 @@ class MeetingAnalyzer:
                 return f.read()
         else:
             # Default prompt if file doesn't exist
+            print(f"⚠ No se encontró el archivo de prompts en {prompt_file}. Usando prompt por defecto.")
             return """Eres un asistente especializado en análisis de reuniones.
 
 Analiza la siguiente transcripción y extrae:
